@@ -1,0 +1,14 @@
+<ul>
+    {% for Categories in categoryData %}
+        {% if Categories.get_children %}
+            <li>
+                <a href="#">{{ Categories.name }}</a>
+                <ul>
+                    {% include 'index.html' with childMenu=Categories.get_children %}
+                </ul>
+            </li>
+        {% else %}
+            <li><a href="#">{{ Categories.name }}</a></li>
+        {% endif %}
+    {% endfor %}
+</ul>
