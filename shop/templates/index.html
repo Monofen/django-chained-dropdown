@@ -1,14 +1,13 @@
+
 <ul>
     {% for child in childMenu %}
-        {% if child.get_children %}
-            <li>
-                <a href="#">{{ child.name }}</a>
+        <li>
+            <a href="{% url 'category' child.id %}">{{ child.name }}</a>
+            {% if child.children.all %}
                 <ul>
-                    {% include 'index.html' with childMenu=child.get_children %}
+                    {% include 'index.html' with childMenu=child.children.all %}
                 </ul>
-            </li>
-        {% else %}
-            <li><a href="#">{{ child.name }}</a></li>
-        {% endif %}
+            {% endif %}
+        </li>
     {% endfor %}
 </ul>

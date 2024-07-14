@@ -1,7 +1,13 @@
-from .models import Categories
+from .models import Categories, Product
 
 def category_data(request):
-    data = {
-        'categoryData': Categories.objects.filter(parent=None)
+    categories = Categories.objects.filter(parent=None)
+    return {
+        'categoryData': categories,
     }
-    return data
+
+def product_data(request):
+    productData = {category.id: Product.objects.filter(category=category) for category in Categories.objects.all()}
+    return {
+        'productData': productData,
+    }
