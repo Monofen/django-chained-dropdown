@@ -1,0 +1,37 @@
+
+<h2>Billing Details for {{ product.name }}</h2>
+<ul>
+    <li>Price: {{ product.price }}</li>
+    {% if product.electronic_features %}
+        <li>Screen: {{ product.electronic_features.screen }}</li>
+        <li>RAM: {{ product.electronic_features.ram }}</li>
+    {% endif %}
+    {% for image in product.images.all %}
+        <li><img src="{{ image.image.url }}" alt="{{ product.name }}" style="height: 155px; width: 155px;"></li>
+    {% endfor %}
+</ul>
+
+<form method="post" action="{% url 'place_order' product.id %}">
+    {% csrf_token %}
+    <input type="hidden" name="product_id" value="{{ product.id }}">
+    
+    <label for="quantity">Quantity:</label>
+    <input type="number" id="quantity" name="quantity" min="1" value="1" required><br>
+
+    <label for="first_name">First Name:</label>
+    <input type="text" id="first_name" name="first_name" required><br>
+    
+    <label for="last_name">Last Name:</label>
+    <input type="text" id="last_name" name="last_name" required><br>
+    
+    <label for="phone">Phone:</label>
+    <input type="text" id="phone" name="phone" required><br>
+    
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required><br>
+
+    <label for="address">Address:</label>
+    <textarea id="address" name="address" rows="4" cols="50"></textarea><br>
+    
+    <button type="submit">Place Order</button>
+</form>

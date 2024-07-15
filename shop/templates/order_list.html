@@ -1,0 +1,21 @@
+
+<h2>Order List</h2>
+
+{% if orders %}
+    <ul>
+        {% for order in orders %}
+            <li>
+                <strong>Customer Name:</strong> {{ order.customer.first_name }} {{ order.customer.last_name }}<br>
+                <strong>Product Name:</strong> {{ order.product.name }}<br>
+                <strong>Price:</strong> {{ order.product.price }}<br>
+                <strong>Status:</strong> {% if order.status %}Completed{% else %}Pending{% endif %}<br>
+                <strong>Quantity:</strong> {{ order.quantity }}
+            </li>
+            <hr>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No orders found.</p>
+{% endif %}
+
+<a href="{% url 'index' %}" class="btn btn-primary">Go back to Home Page</a>

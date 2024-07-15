@@ -1,0 +1,13 @@
+
+<h2>Order Confirmation</h2>
+<p>Your order for {{ order.product.name }} has been placed successfully.</p>
+<p>Order Details:</p>
+<ul>
+    <li>Customer: {{ order.customer }}</li>
+    <li>Address: {{ order.address }}</li>
+    <li>Phone: {{ order.phone }}</li>
+    <li>Quantity: {{ order.quantity }}</li>
+    <li>Date: {{ order.date }}</li>
+</ul>
+<a href="{% url 'index' %}" class="btn btn-primary">Go back to Home Page</a>
+

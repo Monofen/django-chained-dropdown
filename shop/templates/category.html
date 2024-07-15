@@ -1,9 +1,18 @@
+
 <h2>{{ category.name }}</h2>
 <ul>
     {% for product in products %}
-        <li>{{ product.name }} - {{ product.price }}</li>
-        {% for image in product.images.all %}
-            <img src="{{ image.image.url }}" alt="{{ product.name }}" style="height: 155px; width: 155px;">
-        {% endfor %}
+        <li>
+            {{ product.name }} - {{ product.price }} -
+            {% if product.electronic_features %}
+                Screen: {{ product.electronic_features.screen }} - RAM: {{ product.electronic_features.ram }}
+            {% endif %}
+            <ul>
+                {% for image in product.images.all %}
+                    <li><img src="{{ image.image.url }}" alt="{{ product.name }}" style="height: 155px; width: 155px;"></li>
+                {% endfor %}
+                <li><a href="{% url 'billing_page' product.id %}" class="btn btn-primary">Purchase</a></li>
+            </ul>
+        </li>
     {% endfor %}
 </ul>
