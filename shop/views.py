@@ -1,17 +1,47 @@
-
 from django.shortcuts import redirect, render, get_object_or_404
-from .models import Categories, Product, Customer, Order
-from django.contrib.auth.hashers import make_password,check_password
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
 from django.utils import timezone
+from django.contrib.auth.hashers import make_password, check_password
+from django.views.generic.detail import DetailView
+from .forms import CommentForm
+from .models import Categories, Product, Customer, Order, Comment
+
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = 'product_detail.html'
+    context_object_name = 'product'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comments'] = self.object.comments.all()
+        return context
 
 def index(request):
     categories = Categories.objects.filter(parent=None)
     return render(request, 'test.html', {'categoryData': categories})
 
 def category_view(request, category_id):
-    category = get_object_or_404(Categories, id=category_id)
+    category = get_object_or_404(Categories, pk=category_id)
     products = Product.objects.filter(category=category)
     return render(request, 'category.html', {'category': category, 'products': products})
+
+class CommentCreateView(CreateView):
+    model = Comment
+    fields = ['comment', 'user_name']  # Adjust fields as per your Comment model
+    template_name = 'add_comment.html'
+    success_url = reverse_lazy('index')  # Replace with your desired success URL
+
+    def form_valid(self, form):
+        product_id = self.kwargs['product_id']
+        product = get_object_or_404(Product, id=product_id)
+        form.instance.product = product
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['product_id'] = self.kwargs['product_id']
+        return context
 
 def billing_page(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
@@ -46,28 +76,22 @@ def place_order(request, product_id):
             status=False  
         )
 
-
         return render(request, 'order_confirmation.html', {'order': order})
 
-    
     return redirect('index')  
 
 def login(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         
-        
         try:
             customer = Customer.objects.get(email=email)
             request.session['customer_id'] = customer.id  
             if customer.password:
-                
                 return render(request, 'login_password.html', {'customer': customer})
             else:
-                
                 return render(request, 'create_password.html', {'customer': customer})
         except Customer.DoesNotExist:
-           
             return redirect('signup')  
 
     return render(request, 'login.html')
@@ -77,12 +101,10 @@ def create_password(request):
         password = request.POST.get('password')
         customer_id = request.POST.get('customer_id')
         
-        
         customer = get_object_or_404(Customer, pk=customer_id)
         customer.password = make_password(password)
         customer.save()
         
-       
         return redirect('login')  
 
     return render(request, 'create_password.html')
@@ -92,31 +114,24 @@ def login_password(request):
         password = request.POST.get('password')
         email = request.POST.get('email')
         
-       
         customer = get_object_or_404(Customer, email=email)
         if customer.password: 
             if check_password(password, customer.password):
                 request.session['customer_id'] = customer.id  
-                
-               
                 return redirect('order_list')  
             else:
-              
                 return render(request, 'login_password.html', {'error': 'Incorrect password'})
         else:
-          
             return render(request, 'login_password.html', {'error': 'Please create a password'})
 
     return render(request, 'login_password.html')
 
 def order_list(request):
-   
     customer_id = request.session.get('customer_id')
     if customer_id:
         orders = Order.objects.filter(customer_id=customer_id)
         return render(request, 'order_list.html', {'orders': orders})
     else:
-       
         return render(request, 'order_list.html', {'orders': None})
 
 def signup_view(request):

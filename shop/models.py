@@ -78,3 +78,13 @@ class Order(models.Model):
 
     def __str__(self):
         return str(self.product)
+    
+class Comment(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='comments')
+    comment = models.TextField()
+    user_name = models.CharField(max_length=50, default='', blank=False)
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return '%s - %s' % (self.product.name, self.user_name)
+    

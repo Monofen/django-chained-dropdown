@@ -1,10 +1,11 @@
 from django.contrib import admin
-from .models import Categories, Product, Order, Customer, ProductImage, ElectronicProduct
+from .models import Categories, Product, Order, Customer, ProductImage, ElectronicProduct, Comment
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 # Register your models here
 admin.site.register(Customer)
+admin.site.register(Comment)
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):

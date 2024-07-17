@@ -1,4 +1,3 @@
-
 <h2>{{ category.name }}</h2>
 <ul>
     {% for product in products %}
@@ -13,6 +12,22 @@
                 {% endfor %}
                 <li><a href="{% url 'billing_page' product.id %}" class="btn btn-primary">Purchase</a></li>
             </ul>
+            <h2>Comments...</h2>
+            {% if not product.comments.all %}
+                No comments yet...<a href="{% url 'add_comment' product.id %}">Add one</a>
+            {% else %}
+            <a href="{% url 'add_comment' product.id %}">Add another comment</a>
+            <br><br>
+                {% for comment in product.comments.all %}
+                    <strong>
+                        {{ comment.user_name }} - 
+                        {{ comment.date_added }} 
+                    </strong>
+                    <br>
+                    {{ comment.comment }}
+                    <br><br>
+                {% endfor %}
+            {% endif %}
         </li>
     {% endfor %}
 </ul>
